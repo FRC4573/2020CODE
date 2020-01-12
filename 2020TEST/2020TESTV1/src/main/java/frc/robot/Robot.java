@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.cscore.UsbCamera;
@@ -101,6 +102,7 @@ public class Robot extends TimedRobot {
 
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+ 
 
   //********************************************************************************
   // This function is run when the robot is first started up and should be used
@@ -152,6 +154,9 @@ public class Robot extends TimedRobot {
     camera1.setResolution(IMG_WIDTH / 2, IMG_HEIGHT / 2);
     camera1.setFPS(15);
     System.out.println("END Robot Init: ");
+
+       
+  
   }
 
   //*********************************************************************************
