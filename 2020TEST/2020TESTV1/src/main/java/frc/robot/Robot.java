@@ -8,6 +8,9 @@
 package frc.robot;
 
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorSensorV3.RawColor;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -15,15 +18,15 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PWMSpeedController;
-import edu.wpi.first.wpilibj.SpeedController;
+//import edu.wpi.first.wpilibj.PWMSpeedController;
+//import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.drive.MecanumDrive;
+//import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
 
 /**
@@ -38,8 +41,8 @@ public class Robot extends TimedRobot {
   Joystick control_stick;
   DoubleSolenoid liftPiston;
   DoubleSolenoid hatchPiston;
-  //DifferentialDrive m_drive;
-  MecanumDrive mDrive;
+  DifferentialDrive m_drive;
+  //MecanumDrive mDrive;
 
   DigitalInput limitSwitchLower;
   DigitalInput limitSwitch1;
@@ -94,7 +97,7 @@ public class Robot extends TimedRobot {
   static final int NONE = -1;
   static final boolean ACTIVE = false; // limit switches are active low (false)
   static final boolean INACTIVE = true;
-/* talon configuration
+ 
   Talon m_frontRight = new Talon(0);
   Talon m_frontLeft = new Talon(1);
   Talon m_rearLeft = new Talon(2);
@@ -102,15 +105,21 @@ public class Robot extends TimedRobot {
 
   Talon m_elevatorLift = new Talon(4);
   Talon m_ballMotor = new  Talon(5);
-  */
+
+  SpeedControllerGroup m_left = new SpeedControllerGroup(m_frontRight,m_rearRight);
+  SpeedControllerGroup m_right = new SpeedControllerGroup(m_frontLeft, m_rearLeft);
+  
+  /* mecanum motor configuration km
   SpeedController m_frontRight = new Talon(0);
   SpeedController m_frontLeft = new Talon(1);
   SpeedController m_rearLeft = new Talon(2);
   SpeedController m_rearRight = new Talon(3);
+  */ 
   //initializes the I2c port
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
+  public final I2C.Port i2cPort = I2C.Port.kOnboard;
   // color sensor is created 
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+  //public final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort); //jimmy test comment
+  ColorSensorV3 sensor = new ColorSensorV3(i2cPort);
 
   //********************************************************************************
   // This function is run when the robot is first started up and should be used
@@ -140,16 +149,16 @@ public class Robot extends TimedRobot {
 
     drive_stick = new Joystick(0);
     control_stick = new Joystick(1);
-    //km
+    
 
-    mDrive = new MecanumDrive(m_frontLeft, m_rearLeft, m_frontRight, m_rearRight);
+    //mDrive = new MecanumDrive(m_frontLeft, m_rearLeft, m_frontRight, m_rearRight); mecanum creation
 
 
-    //km
-
-    //m_drive = new DifferentialDrive(m_left, m_right);
-    //m_drive.setExpiration(0.50);
-    //m_drive.arcadeDrive(0, 0, true);
+  
+    
+    m_drive = new DifferentialDrive(m_left, m_right);
+    m_drive.setExpiration(0.50);
+    m_drive.arcadeDrive(0, 0, true);
     limitSwitchLower = new DigitalInput(0);
     limitSwitch1 = new DigitalInput(1);
     limitSwitch2 = new DigitalInput(2);
@@ -179,15 +188,24 @@ public class Robot extends TimedRobot {
   //*********************************************************************************
   @Override
   public void robotPeriodic() {
-    Color detectedColor = m_colorSensor.getColor();
+    //km color sensor work
+    Color detectedColor = sensor.getColor();
+    Color blue = new Color(0.0,0.0,0.0);
+    ColorMatchResult matched = new ColorMatchResult( , 80.0)
+    System.out.println(detectedColor);
+    //km color sensor work
+
+    /* not needed doesnt work km
     double IR = m_colorSensor.getIR();
-    SmartDashboard.putNumber("Red", detectedColor.red);
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    SmartDashboard.putNumber("IR", IR);
+    sensor.putNumber("Red", detectedColor.red);
+    sensor.putNumber("Green", detectedColor.green);
+    sensor.putNumber("Blue", detectedColor.blue);
+    
+    sensor.putNumber("IR", IR);
     int proximity = m_colorSensor.getProximity();
 
-    SmartDashboard.putNumber("Proximity", proximity);
+    sensor.putNumber("Proximity", proximity);
+    */
   }
 
   @Override
